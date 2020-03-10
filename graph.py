@@ -13,6 +13,8 @@ cuisine = ''
 day = ''
 time = ''
 
+graph = ''
+
 #Possible Ties
 restaurant1 = ''
 restaurant2 = ''
@@ -20,7 +22,7 @@ restaurant2 = ''
 #Only to be run once in it's lifetime
 def init_graph():
 	uri = "bolt://neo4j:payR900chump@localhost:8000"
-	graph = Graph(uri)
+	global graph = Graph(uri)
 
 	#Clean graph
 	graph.evaluate("MATCH (n) DETACH DELETE n")
@@ -64,21 +66,20 @@ def init_graph():
 
 def open_graph():
 	uri = "bolt://neo4j:payR900chump@localhost:8000"
-	graph = Graph(uri)
+	global graph = Graph(uri)
 	
 #Sarah, this should be up to you
 def get_input():
 	global city = 'sdsdf' #etc...
 
-#fetch will traverse the graph, gathering all the required information
-#city -> string ; cuisine -> string ; day -> integer ; time -> datetime
+#STILL GOING TO CHANGE DATA
 def fetch(city, cuisine, day, time):
-	#first, MATCH by city and cuisine
-	nodes = ''
-	r_type = ''
-	limit = ''
-	graph.match(nodes, r_type, limit)
-	
+	#time format: 00:00-00:00
+	#All data must be in CamelCase
+	time = time.split('-')
+	day = day.lower()
+	cypher = "MATCH (rest:Business)-[:IN_CATEGORY]->(Category {id: '{cuisine}'}) WHERE rest.city='{ct}' AND rest.{d}Start>'{time_start}' AND rest.{day}End<'{time_end}'".format(ct=city, d=day, time_start=time[0], time_end=time[1])
+	graph.run(cypher).data()		#RETURNS dict object	
 
 #sorts and finds which restaurant to recommend
 def recommend_rest():
