@@ -1,19 +1,21 @@
-#------------------------------------------------------------------------------#
-#	This is suedo code. This is simply to get an idea of what sort of 
-#	functions to expect.
-#------------------------------------------------------------------------------#
-
 #import jinja
 #import flask
-import py2neo import Graph
+from py2neo import Graph
 
-#Global Variables
+#--------------------------------------------------------------------------------#
+#	GLOBAL VARIABLES
+#--------------------------------------------------------------------------------#
+
 city = ''
 cuisine = ''
 day = ''
 time = ''
 
 graph = ''
+
+#--------------------------------------------------------------------------------#
+#	GRAPH CODE
+#--------------------------------------------------------------------------------#
 
 #Only to be run once in it's lifetime
 def init_graph():
@@ -64,9 +66,10 @@ def open_graph():
 	uri = "bolt://neo4j:payR900chump@localhost:8000"
 	global graph = Graph(uri)
 	
-#Sarah, this should be up to you
-def get_input():
-	global city = 'sdsdf' #etc...
+
+#--------------------------------------------------------------------------------#
+# 	CHRISTIAAN & LAUREN
+#--------------------------------------------------------------------------------#
 
 #STILL GOING TO CHANGE DATA
 def fetch(city, cuisine, day, time):
@@ -86,7 +89,17 @@ def get_user_from_review(text): #property eg id, text... =  property_val
 	cypher = "MATCH (u:User)-[r:Reviews]->(:Business) WHERE r.text='{txt}' RETURN u".format(txt=text)
 	return graph.run(cypher).data()[0] #This should work...
 
+def get_social_circle(user):
+	cypher = "MATCH (u:User)-[:FRIENDS*1...2]->(b:User), (b:User)-[:FRIENDS]->(c:User) RETURN b, c"
 #sorts and finds which restaurant to recommend
+
+def get_reviews_by_50(users, city, cuisine): #users are list of dict, other are strings
+
+
+#--------------------------------------------------------------------------------#
+#	ADAM & JOHAN
+#--------------------------------------------------------------------------------#
+
 def recommend_rest(restaurants): #restaurants is list of dictionaries
 	#find_most_stars
 
@@ -100,6 +113,20 @@ def recommend_rest(restaurants): #restaurants is list of dictionaries
 def get_top_review(reviews): #list of dictionaries
 	#sort...
 	return review #dict
+
+#sort by highest review count
+def get_50_reviewers(users):
+
+def recommend_based():
+
+def filter_reviews(reviews):
+
+#--------------------------------------------------------------------------------#
+#	SARAH
+#--------------------------------------------------------------------------------#
+
+def get_input():
+	global city = 'sdsdf' #etc...
 
 #information all within the dict object
 def display_stats(restaurant):
@@ -115,9 +142,9 @@ def display_useful_review(review, user): #review and user are dicts
 
 def display_photos(restaurant):
 
-def get_50_reviewers():
-
-def recommend_based():
+#--------------------------------------------------------------------------------#
+#	RUN
+#--------------------------------------------------------------------------------#
 
 def main():
 	open_graph()
@@ -146,8 +173,13 @@ def main():
 	# Part 2: Recommend 5 more restaurants based on 50 other users
 	circle = get_social_circle(top_review_user) #circle is list of dicts
 
-	get_50_reviewers()
-	recommend_based()
+	top_50  = get_50_reviewers(circle) #top_50 list of dict
+	reviews_by_50 = get_reviews_by_50(top_50, city, cuisine) #list of dict
+	top_5_restaurants = filter_reviews(reviews_by_50) #list of dict
+
+	for restaurant in top_5_restaurants:
+		display_stats(restaurant)
+
 
 if __name__ == '__main__':
 	main()
