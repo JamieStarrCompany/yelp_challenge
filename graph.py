@@ -19,7 +19,8 @@ graph = ''
 
 #Only to be run once in it's lifetime
 def init_graph():
-	uri = "bolt://neo4j:payR900chump@localhost:8000"
+	your_password = '<your password here>'
+	uri = "bolt://neo4j:{}@localhost:8000".format(your_password)
 	global graph = Graph(uri)
 
 	#Clean graph
