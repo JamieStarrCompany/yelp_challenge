@@ -120,6 +120,10 @@ def get_top_review(reviews): #list of dictionaries
 
 #sort by highest review count
 def get_50_reviewers(users):
+	sorted_reviews = sorted(reviews, reverse=True, key=lambda x: (x['review_count']))
+	if len(sorted_reviews) < 50:
+		return sorted_reviews
+	return sorted_reviews[:50]
 
 def filter_reviews(reviews):
 
