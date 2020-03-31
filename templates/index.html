@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Search restaurant</title>
+  </head>
+  <body>
+    <form action="#" method="post">
+      <label>Choose city:</label>
+      <select name="city">
+          {% for c in cities %}
+            <option value="{{c['City']}}">{{c['City']}}</option>
+          {% endfor %}
+      </select>
+      <label>Choose cuisine:</label>
+      <select name='cuisine'>
+        {% for cu in cuisines %}
+          <option value="{{cu['Cuisine']['id']}}">{{cu['Cuisine']['id']}}</option>
+        {% endfor %}
+      </select>
+      <p><input type="submit" name="sub" /></p>
+    </form>
+  </body>
+</html>
