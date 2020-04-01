@@ -1,7 +1,7 @@
 from jinja2 import Template
 from flask import Flask
 from py2neo import Graph
-
+import passw
 #--------------------------------------------------------------------------------#
 #	GLOBAL VARIABLES
 #--------------------------------------------------------------------------------#
@@ -19,7 +19,7 @@ graph = ''
 
 #Only to be run once in it's lifetime
 def init_graph():
-	your_password = 'asshat1234'
+	your_password = passw.ord()
 	uri = "bolt://neo4j:{}@localhost:8000".format(your_password)
 	global graph
 	graph = Graph(uri)
@@ -65,7 +65,8 @@ def init_graph():
                '",{batchSize: 10000, iterateList: true});')
 
 def open_graph():
-	uri = "bolt://neo4j:asshat1234@localhost:8000"
+        
+	uri = "bolt://neo4j:{}@localhost:8000"%(passw.ord())
 	global graph
 	graph = Graph(uri)
 	

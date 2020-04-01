@@ -1,8 +1,9 @@
 from py2neo import Graph
 from flask import Flask, render_template, request, redirect, url_for
+import passw
 
 username = "neo4j"
-password = "Boesman1"
+password = passw.ord()
 uri = "bolt://" + username + ":" + password + "@localhost:8000"
 graph = Graph(uri)
 
