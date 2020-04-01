@@ -123,7 +123,15 @@ def get_top_review(reviews): #list of dictionaries
 
 #sort by highest review count
 def get_50_reviewers(users):
+<<<<<<< HEAD
 	s = 'temp'
+=======
+	sorted_reviews = sorted(reviews, reverse=True, key=lambda x: (x['review_count']))
+	if len(sorted_reviews) < 50:
+		return sorted_reviews
+	return sorted_reviews[:50]
+
+>>>>>>> 9d00b23495b914b586845bb76d60856ad7359f74
 def filter_reviews(reviews):
 	s = 'temp'
 #--------------------------------------------------------------------------------#
