@@ -85,7 +85,7 @@ def fetch(city, cuisine, day, time):
 	return graph.run(cypher).data()		#RETURNS list of dictionaries
 
 def get_reviews(restaurant): #dict object
-	id = restaurant.get('id')
+	id = restaurant['id']
 	cypher = "MATCH (:Business {id : '%s'})<-[r:REVIEWS]-(:User) RETURN r"%(id)
 	return graph.run(cypher).data()
 
@@ -94,7 +94,7 @@ def get_user_from_review(text): #property eg id, text... =  property_val
 	return graph.run(cypher).data()[0] #This should work...
 
 def get_social_circle(user):
-	id = user.get('id')
+	id = user['id']
 	cypher = "MATCH (u:User {id : '%s'})-[:FRIEND*1..2]->(b:User) RETURN b"%(id)
 #sorts and finds which restaurant to recommend
 
@@ -115,11 +115,13 @@ def get_reviews_by_50(users, city, cuisine): #users are list of dict, other are 
 
 #Sort by stars, tie break by review count
 def recommend_rest(restaurants): #restaurants is list of dictionaries
-	sorted_list  = sorted(restaurants, reverse= True, key= lambda k: (k['stars'],k['review_count']))
-	return sorted_list[0]
+	#sorted_list  = sorted(restaurants, reverse= True, key= lambda k: (k['stars'],k['review_count']))
+	sorted_list  = sorted(restaurants, reverse= True, key= lambda k: ('stars','review_count'))
+	return sorted_list[0]['rest']
 
 def get_top_review(reviews): #list of dictionaries
-	sorted_list = sorted(reviews, reverse= True, key= lambda k: (k['useful']) )
+	#sorted_list = sorted(reviews, reverse= True, key= lambda k: (k['useful']) )
+	sorted_list = sorted(reviews, reverse= True, key= lambda k: ('useful'))
 	return sorted_list[0]
 
 #sort by highest review count
@@ -164,15 +166,14 @@ def main():
 	get_input()
 
 	#TEST CODE#
-	city = 'New York'
-	cuisine = ''
-	day = ''
-	time = '0-0'
+	city = 'Phoenix'
+	cuisine = 'Burgers'
+	day = 'Monday'
+	time = '14:00-15:00'
 	##
 
 	rest_results = fetch(city, cuisine, day, time) #rest_results is a list of dicts
 	restaurant = recommend_rest(rest_results) #restaurant should be a dict object
-	
 	reviews_result = get_reviews(restaurant) #list of dictionaries
 	top_review = get_top_review(reviews_result) #dict object
 	top_review_user = get_user_from_review(top_review.get('text'))
