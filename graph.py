@@ -2,6 +2,8 @@ from jinja2 import Template
 from flask import Flask
 from py2neo import Graph
 import passw
+import re
+
 #--------------------------------------------------------------------------------#
 #	GLOBAL VARIABLES
 #--------------------------------------------------------------------------------#
@@ -86,19 +88,16 @@ def fetch(city, cuisine, day, time):
 
 def get_reviews(restaurant): #dict object
 	id = restaurant['id']
-	cypher = "MATCH (:Business {id : '%s'})<-[r:REVIEWS]-(:User) RETURN r"%(id)
+	cypher = "MATCH (:Business {id : '%s'})<-[r:REVIEWS]-(u:User) RETURN r, u"%(id)
 	return graph.run(cypher).data()
-
-def get_user_from_review(text): #property eg id, text... =  property_val
-	cypher = "MATCH (u:User)-[r:Reviews]->(:Business) WHERE r.text='%s' RETURN u"%(text)
-	return graph.run(cypher).data()[0] #This should work...
 
 def get_social_circle(user):
 	id = user['id']
 	cypher = "MATCH (u:User {id : '%s'})-[:FRIEND*1..2]->(b:User) RETURN b"%(id)
-#sorts and finds which restaurant to recommend
+	print(cypher)
+	return graph.run(cypher).data()
 
-#eSlOI3GhroEtcbaD_nFXJQ
+#sorts and finds which restaurant to recommend
 def get_reviews_by_50(users, city, cuisine): #users are list of dict, other are strings
 	full_list = list()
 	for user in users:
@@ -174,12 +173,12 @@ def main():
 
 	rest_results = fetch(city, cuisine, day, time) #rest_results is a list of dicts
 	restaurant = recommend_rest(rest_results) #restaurant should be a dict object
-	reviews_result = get_reviews(restaurant) #list of dictionaries
+	reviews_result = get_reviews(restaurant) #list of dictionaries, including the reviews and their users
 	top_review = get_top_review(reviews_result) #dict object
-	top_review_user = get_user_from_review(top_review.get('text'))
-	
+
 	# Part 2: Recommend 5 more restaurants based on 50 other users
-	circle = get_social_circle(top_review_user) #circle is list of dicts
+	circle = get_social_circle(dict(top_review.get('u'))) #circle is list of dicts
+	print(len(circle))
 
 	top_50  = get_50_reviewers(circle) #top_50 list of dict
 	reviews_by_50 = get_reviews_by_50(top_50, city, cuisine) #list of dict
