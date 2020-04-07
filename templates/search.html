@@ -4,6 +4,11 @@
     <title>Search restaurant</title>
   </head>
   <body>
+    {% if found %}
     <p>Recommended restaurant: {{rest}}</p>
+    <p>{{stars}} stars, {{review_count}} reviews</p>
+    {% else %}
+    <p>Not found</p>
+    {% endif %}
   </body>
 </html>
