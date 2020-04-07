@@ -110,7 +110,7 @@ def get_reviews_by_50(users, city, cuisine): #users are list of dict, other are 
 
 def get_images(bussiness):
 	id = bussiness['id']
-        print("Not working")
+	
 #--------------------------------------------------------------------------------#
 #	ADAM & JOHAN
 #--------------------------------------------------------------------------------#
@@ -216,7 +216,9 @@ def display_recommendation(top_5_restaurants):
 def main():
 	open_graph()
 
+	#--------------------------------------------------------------------------------#
 	#Part 1: Recommend a restaurant with it's review
+	#--------------------------------------------------------------------------------#
 	get_input()
 
 	#TEST CODE#
@@ -237,16 +239,19 @@ def main():
 	top_review = get_top_review(reviews_result) #dict object
 	#print(top_review)
 
+	#--------------------------------------------------------------------------------#
 	# Part 2: Recommend 5 more restaurants based on 50 other users
+	#--------------------------------------------------------------------------------#
 	circle = get_social_circle(dict(top_review.get('u'))) #circle is list of dicts of max len 50
-	#rint(circle)
+	#print(circle)
 
 	reviews_by_50 = get_reviews_by_50(circle, city, cuisine) #list of dict
 	#print(reviews_by_50)
 	top_5_restaurants = filter_reviews(reviews_by_50) #list of dict
 	
+	#--------------------------------------------------------------------------------#
 	#Part 3: Display information
-
+	#--------------------------------------------------------------------------------#
 	display_stats(restaurant, reviews_result)
 	display_useful_review(top_review)
 	display_photos(restaurant)
