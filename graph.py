@@ -1,3 +1,4 @@
+import requests
 from jinja2 import Template
 from flask import Flask
 from py2neo import Graph
@@ -107,6 +108,9 @@ def get_reviews_by_50(users, city, cuisine): #users are list of dict, other are 
 
 	return full_list
 
+def get_images(bussiness):
+	id = bussiness['id']
+        print("Not working")
 #--------------------------------------------------------------------------------#
 #	ADAM & JOHAN
 #--------------------------------------------------------------------------------#
@@ -223,6 +227,8 @@ def main():
 	##
 
 	rest_results = fetch(city, cuisine, day, time) #rest_results is a list of dicts
+	restaurant = recommend_rest(rest_results) #restaurant should be a dict object
+	reviews_result = get_reviews(restaurant) #list of dictionaries
 	#print(rest_results)
 	restaurant = run.recommend_rest(rest_results) #restaurant should be a dict object
 	#print(restaurant)
