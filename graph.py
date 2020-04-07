@@ -3,6 +3,9 @@ from jinja2 import Template
 from flask import Flask
 from py2neo import Graph
 import passw
+import re
+import run
+
 #--------------------------------------------------------------------------------#
 #	GLOBAL VARIABLES
 #--------------------------------------------------------------------------------#
@@ -76,35 +79,33 @@ def open_graph():
 # 	CHRISTIAAN & LAUREN
 #--------------------------------------------------------------------------------#
 
-#STILL GOING TO CHANGE DATA
 def fetch(city, cuisine, day, time):
 	#time format: 00:00-00:00
 	#All data must be in CamelCase
 	time = time.split('-')
 	day = day.lower()
-	cypher = "MATCH (rest:Business)-[:IN_CATEGORY]->(Category {id: '%s'}) WHERE rest.city='%s' AND rest.%sStart>'%s' AND rest.%sEnd<'%s' RETURN rest"%(cuisine, city, day, time[0], day, time[1])
+	cypher = "MATCH (rest:Business)-[:IN_CATEGORY]->(Category {id: '%s'}) WHERE rest.city='%s' AND NOT ('%s' > rest.%sEnd AND '%s' < rest.%sStart AND '%s' > rest.%sEnd AND '%s' < rest.%sStart) RETURN rest"%(cuisine, city, time[0], day, time[0], day, time[1], day, time[1], day)
 	return graph.run(cypher).data()		#RETURNS list of dictionaries
 
 def get_reviews(restaurant): #dict object
 	id = restaurant['id']
-	cypher = "MATCH (:Business {id : '%s'})<-[r:REVIEWS]-(:User) RETURN r"%(id)
+	cypher = "MATCH (:Business {id : '%s'})<-[r:REVIEWS]-(u:User) RETURN r, u"%(id)
 	return graph.run(cypher).data()
-
-def get_user_from_review(text): #property eg id, text... =  property_val
-	cypher = "MATCH (u:User)-[r:Reviews]->(:Business) WHERE r.text='%s' RETURN u"%(text)
-	return graph.run(cypher).data()[0] #This should work...
 
 def get_social_circle(user):
 	id = user['id']
-	cypher = "MATCH (u:User {id : '%s'})-[:FRIEND*1..2]->(b:User) RETURN b"%(id)
-#sorts and finds which restaurant to recommend
+	cypher = "MATCH (u:User {id : '%s'})-[:FRIEND*1..2]-(b:User)-[r:REVIEWS]-(:Business) RETURN b, COUNT(r) ORDER BY COUNT(r) DESC LIMIT 50"%(id)
+	return graph.run(cypher).data()
 
-#eSlOI3GhroEtcbaD_nFXJQ
+#sorts and finds which restaurant to recommend
 def get_reviews_by_50(users, city, cuisine): #users are list of dict, other are strings
 	full_list = list()
 	for user in users:
-		id = user.get('id')
-		cypher = "MATCH (:User {id : '%s')-[r:REVIEWS]->(:Business) RETURN r"%(id)
+		print(user)
+		print()
+		id = user['b'].get('id')
+		print(id)
+		cypher = "MATCH (:User {id : '%s'})-[r:REVIEWS]->(b:Business)-[:IN_CATEGORY]->(Category {id: '%s'}) WHERE b.city = '%s' RETURN r"%(id, cuisine, city)
 		temp_list = graph.run(cypher).data()
 		full_list = full_list + temp_list
 
@@ -112,26 +113,27 @@ def get_reviews_by_50(users, city, cuisine): #users are list of dict, other are 
 
 def get_images(bussiness):
 	id = bussiness['id']
-	url = 'https://api.yelp.com/v3/businesses/{}'.format(id)
-	print(url)
-	response = requests.get(url)
-	return response
+        print("Not working")
 #--------------------------------------------------------------------------------#
 #	ADAM & JOHAN
 #--------------------------------------------------------------------------------#
 
+
+# !NEEDS FIXING! #
 #Sort by stars, tie break by review count
 def recommend_rest(restaurants): #restaurants is list of dictionaries
 	#sorted_list  = sorted(restaurants, reverse= True, key= lambda k: (k['stars'],k['review_count']))
 	sorted_list  = sorted(restaurants, reverse= True, key= lambda k: ('stars','review_count'))
 	return sorted_list[0]['rest']
 
+# !NEEDS FIXING! #
 def get_top_review(reviews): #list of dictionaries
 	#sorted_list = sorted(reviews, reverse= True, key= lambda k: (k['useful']) )
-	sorted_list = sorted(reviews, reverse= True, key= lambda k: ('useful'))
+	sorted_list = sorted(reviews, reverse= True, key= lambda k: ('useful'))	
 	return sorted_list[0]
 
 #sort by highest review count
+#NOT NEEDED ANYMORE
 def get_50_reviewers(users):
 	s = 'temp'
 	sorted_reviews = sorted(reviews, reverse=True, key=lambda x: (x['review_count']))
@@ -140,7 +142,10 @@ def get_50_reviewers(users):
 	return sorted_reviews[:50]
 
 def filter_reviews(reviews):
+	if review.len() == 0:
+		return reviews
 	s = 'temp'
+
 #--------------------------------------------------------------------------------#
 #	SARAH
 #--------------------------------------------------------------------------------#
@@ -152,17 +157,19 @@ def get_input():
 #information all within the dict object
 def display_stats(restaurant):
 	name = restaurant.get('name')
-	#full address
+	address = restaurant.get('address')
 	stars = restaurant.get('stars')
 	#review_count = restaurant.get('review_count')
 
-def display_useful_review(review, user): #review and user are dicts
+def display_useful_review(review): 
 	#full text
 	#name of user
 	#stars
 	s = 'tempo'
+
 def display_photos(restaurant):
 	s = restaurant
+
 #--------------------------------------------------------------------------------#
 #	RUN
 #--------------------------------------------------------------------------------#
@@ -181,22 +188,27 @@ def main():
 
 	rest_results = fetch(city, cuisine, day, time) #rest_results is a list of dicts
 	restaurant = recommend_rest(rest_results) #restaurant should be a dict object
-	print(get_images(restaurant))
 	reviews_result = get_reviews(restaurant) #list of dictionaries
+	#print(rest_results)
+	restaurant = run.recommend_rest(rest_results) #restaurant should be a dict object
+	#print(restaurant)
+	reviews_result = get_reviews(restaurant['rest']) #list of dictionaries, including the reviews and their users
+	#print(reviews_result)
 	top_review = get_top_review(reviews_result) #dict object
-	top_review_user = get_user_from_review(top_review.get('text'))
-	
-	# Part 2: Recommend 5 more restaurants based on 50 other users
-	circle = get_social_circle(top_review_user) #circle is list of dicts
+	#print(top_review)
 
-	top_50  = get_50_reviewers(circle) #top_50 list of dict
-	reviews_by_50 = get_reviews_by_50(top_50, city, cuisine) #list of dict
+	# Part 2: Recommend 5 more restaurants based on 50 other users
+	circle = get_social_circle(dict(top_review.get('u'))) #circle is list of dicts of max len 50
+	#print(circle)
+
+	reviews_by_50 = get_reviews_by_50(circle, city, cuisine) #list of dict
+	print(reviews_by_50)
 	top_5_restaurants = filter_reviews(reviews_by_50) #list of dict
 	
 	#Part 3: Display information
 
 	display_stats(restaurant)
-	display_useful_review(top_review, top_review_user)
+	display_useful_review(top_review)
 	display_photos(restaurant)
 
 	for restaurant in top_5_restaurants:
