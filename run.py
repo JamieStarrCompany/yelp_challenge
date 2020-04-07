@@ -15,23 +15,18 @@ def fetch(city, cuisine, day, time):
     cypher = "  MATCH (rest:Business)-[:IN_CATEGORY]->(Category {id: '%s'})\
                 WHERE rest.city =~ '(?i)%s'\
                 WITH rest ORDER BY rest.stars DESC\
-                RETURN rest"%(cuisine, city)
+                RETURN rest, size((rest)<-[:REVIEWS]-()) AS rev_count"%(cuisine, city)
     return graph.run(cypher).data()
-
-#TODO get number of reviews for givin business, for now it just returns 0
-def get_review_count(business_id):
-    # cypher = "  MATCH (:User)-[r:REVIEWS]->(:Business {business_id:'%s'})\
-    #             RETURN count(r)"%(business_id)
-    # return int(graph.run(cypher).data())
-    return 0
 
 def get_all_cuisines():
     cypher = "MATCH (c:Category)\
+                WITH c ORDER BY c.id\
                 RETURN c as Cuisine"
     return graph.run(cypher).data()
 
 def get_all_cities():
     cypher = "MATCH (b:Business)\
+                WITH b ORDER BY b.city\
                 RETURN DISTINCT b.city AS City"
     return graph.run(cypher).data()
 
@@ -41,17 +36,13 @@ def recommend_rest(restaurants):
         return
 
     top_rest = restaurants[0]
-    top_rest_reviews = get_review_count(top_rest['rest']['business_id'])
 
     for rest in restaurants:
         if float(rest['rest']['stars']) < float(top_rest['rest']['stars']):
             break
-        elif get_review_count(rest['rest']['business_id']) > top_rest_reviews:
+        elif rest['rev_count'] > top_rest['rev_count']:
              top_rest = rest
-             top_rest_reviews = get_review_count(top_rest['rest']['business_id'])
     return top_rest
-
-
 
 app = Flask(__name__)
 
@@ -59,8 +50,19 @@ app = Flask(__name__)
 def search():
     city = request.args.get("city")
     cuisine = request.args.get("cuisine")
-    rest_name = recommend_rest(fetch(city, cuisine, "", ""))['rest']['name']
-    return render_template("search.html", rest=rest_name)
+    restaurant = recommend_rest(fetch(city, cuisine, "", ""))
+    if (restaurant == None):
+        rest_found = False
+        rest_name = ""
+        stars = 0
+        review_count = 0
+    else:
+        rest_found = True;
+        rest_name = restaurant['rest']['name']
+        stars = restaurant['rest']['stars']
+        review_count = restaurant['rev_count']
+    return render_template("search.html", found=rest_found, rest=rest_name,
+    stars=stars, review_count=review_count)
 
 @app.route("/", methods=["POST", "GET"])
 def home():
