@@ -100,10 +100,7 @@ def get_social_circle(user):
 def get_reviews_by_50(users, city, cuisine): #users are list of dict, other are strings
 	full_list = list()
 	for user in users:
-		print(user)
-		print()
 		id = user['b'].get('id')
-		print(id)
 		cypher = "MATCH (:User {id : '%s'})-[r:REVIEWS]->(b:Business)-[:IN_CATEGORY]->(Category {id: '%s'}) WHERE b.city = '%s' RETURN r"%(id, cuisine, city)
 		temp_list = graph.run(cypher).data()
 		full_list = full_list + temp_list
@@ -137,10 +134,11 @@ def get_50_reviewers(users):
 		return sorted_reviews
 	return sorted_reviews[:50]
 
+
 def filter_reviews(reviews):
-	if review.len() == 0:
+	if len(reviews) == 0:
 		return reviews
-	s = 'temp'
+	
 
 #--------------------------------------------------------------------------------#
 #	SARAH
@@ -151,20 +149,62 @@ def get_input():
 	city = 'sdsdf' #etc...
 
 #information all within the dict object
-def display_stats(restaurant):
-	name = restaurant.get('name')
-	address = restaurant.get('address')
-	stars = restaurant.get('stars')
-	#review_count = restaurant.get('review_count')
+def display_stats(restaurant, reviews):
+	name = restaurant['rest'].get('name')
+	address = restaurant['rest'].get('address')
+	stars = restaurant['rest'].get('stars')
+	review_count = len(reviews)
+
+	print('---------------------------')
+	print('Top Restaurant:')
+	print('---------------------------')
+	print(name)
+	print(address)
+	print("Rating: " + stars)
+	print('Number of reviews: ' + str(review_count))
+	print('---------------------------')
+
+
 
 def display_useful_review(review): 
-	#full text
-	#name of user
+	text = review['r'].get('text')
+	username = review['u'].get('name')
+	stars = review['r'].get('stars')
 	#stars
-	s = 'tempo'
+	print('Top Review:')
+	print('---------------------------')
+	print('Name: ' + username)
+	print('Stars: ' + str(stars))
+	print()
+	print(text)
+	print()
+	print('---------------------------')
+
+
 
 def display_photos(restaurant):
-	s = restaurant
+	print(' -------------')
+	print('|             |')
+	print('|             |')
+	print('|    piktur   |')
+	print('|             |')
+	print('|             |')
+	print(' -------------')
+	print()
+
+def display_recommendation(top_5_restaurants):
+	print("Other restaurants enjoyed by people like you:")
+	print('---------------------------')
+	print()
+	if len(top_5_restaurants) == 0:
+		print('Whoops!')
+		print("Our sources have come up empty...")
+	else:
+		for restaurant in top_5_restaurants:
+			display_stats(restaurant)
+	
+	print('---------------------------')
+
 
 #--------------------------------------------------------------------------------#
 #	RUN
@@ -176,10 +216,10 @@ def main():
 	get_input()
 
 	#TEST CODE#
-	city = 'Phoenix'
-	cuisine = 'Burgers'
-	day = 'Monday'
-	time = '14:00-15:00'
+	city = 'Mesa'
+	cuisine = 'Cafes'
+	day = 'Wednesday'
+	time = '09:00-11:00'
 	##
 
 	rest_results = fetch(city, cuisine, day, time) #rest_results is a list of dicts
@@ -193,21 +233,18 @@ def main():
 
 	# Part 2: Recommend 5 more restaurants based on 50 other users
 	circle = get_social_circle(dict(top_review.get('u'))) #circle is list of dicts of max len 50
-	#print(circle)
+	#rint(circle)
 
 	reviews_by_50 = get_reviews_by_50(circle, city, cuisine) #list of dict
-	print(reviews_by_50)
+	#print(reviews_by_50)
 	top_5_restaurants = filter_reviews(reviews_by_50) #list of dict
 	
 	#Part 3: Display information
 
-	display_stats(restaurant)
+	display_stats(restaurant, reviews_result)
 	display_useful_review(top_review)
 	display_photos(restaurant)
-
-	for restaurant in top_5_restaurants:
-		display_stats(restaurant)
-
+	display_recommendation(top_5_restaurants)
 
 if __name__ == '__main__':
 	main()
