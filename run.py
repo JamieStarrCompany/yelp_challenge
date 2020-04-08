@@ -1,6 +1,7 @@
 from py2neo import Graph
 from flask import Flask, render_template, request, redirect, url_for
 import passw
+from datetime import date
 
 username = "neo4j"
 password = passw.ord()
@@ -44,6 +45,28 @@ def recommend_rest(restaurants):
              top_rest = rest
     return top_rest
 
+def get_reviews(restaurant):
+	id = restaurant['id']
+	cypher = "MATCH (:Business {id : '%s'})<-[r:REVIEWS]-(u:User)\
+                RETURN r, u"%(id)
+	return graph.run(cypher).data()
+
+def get_top_review(reviews):
+    #remove reviews older than 2 years
+    now = date.today()
+    now_str = "%s-%s-%s"%(str(now.year-2), '{:02d}'.format(now.month),
+        '{:02d}'.format(now.day))
+    for i in range(len(reviews) - 1, -1, -1):
+        if reviews[i]['r']['date'] < now_str:
+            reviews.remove(reviews[i])
+        elif reviews[i]['r']['useful'] == None:
+            reviews[i]['r']['useful'] = 0
+    #sort
+    reviews.sort(key=lambda x: (x['r']['useful'], x['r']['date']), reverse=True)
+    if reviews:
+        return reviews[0]
+
+
 app = Flask(__name__)
 
 @app.route("/search", methods=["GET"])
@@ -51,18 +74,25 @@ def search():
     city = request.args.get("city")
     cuisine = request.args.get("cuisine")
     restaurant = recommend_rest(fetch(city, cuisine, "", ""))
-    if (restaurant == None):
-        rest_found = False
-        rest_name = ""
-        stars = 0
-        review_count = 0
-    else:
-        rest_found = True;
+    rest_name = ""
+    rest_stars = 0.0
+    review_count = 0
+    top_reviewer = ""
+    top_rev_text = ""
+    top_rev_stars = 0.0
+    if restaurant:
         rest_name = restaurant['rest']['name']
-        stars = restaurant['rest']['stars']
-        review_count = restaurant['rev_count']
-    return render_template("search.html", found=rest_found, rest=rest_name,
-    stars=stars, review_count=review_count)
+        rest_stars = float(restaurant['rest']['stars'])
+        review_count = int(restaurant['rev_count'])
+        top_review = get_top_review(get_reviews(restaurant['rest']))
+        if top_review:
+            top_reviewer = top_review['u']['name']
+            top_rev_text = top_review['r']['text']
+            top_rev_stars = top_review['r']['stars']
+
+    return render_template("search.html", rest=rest_name,rest_stars=rest_stars,
+    review_count=review_count, top_reviewer=top_reviewer,
+    top_rev_text=top_rev_text, top_rev_stars=top_rev_stars)
 
 @app.route("/", methods=["POST", "GET"])
 def home():
