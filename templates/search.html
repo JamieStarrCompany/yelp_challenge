@@ -4,11 +4,17 @@
     <title>Search restaurant</title>
   </head>
   <body>
-    {% if found %}
+    {% if rest != "" %}
     <p>Recommended restaurant: {{rest}}</p>
-    <p>{{stars}} stars, {{review_count}} reviews</p>
+    <p>{{rest_stars}} stars, {{review_count}} reviews</p>
     {% else %}
-    <p>Not found</p>
+    <p>No restaurants found</p>
     {% endif %}
+    {% if top_rev_text%}
+    <p>Top review:</p>
+    <p>Reviewer: {{top_reviewer}}</p>
+    <p>{{top_rev_stars}} stars</p>
+    <p>{{top_rev_text}}</p>
+    {% endif%}
   </body>
 </html>
