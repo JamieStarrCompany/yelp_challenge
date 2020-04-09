@@ -13,10 +13,10 @@ graph = Graph(uri)
 def fetch(city, cuisine, day, time):
     #TODO add day and time to query
     day = day.lower()
-    cypher = "  MATCH (rest:Business)-[:IN_CATEGORY]->(Category {id: '%s'})\
-                WHERE rest.city =~ '(?i)%s'\
+    cypher = '  MATCH (rest:Business)-[:IN_CATEGORY]->(Category {id: "%s"})\
+                WHERE rest.city =~ "(?i)%s"\
                 WITH rest ORDER BY rest.stars DESC\
-                RETURN rest, size((rest)<-[:REVIEWS]-()) AS rev_count"%(cuisine, city)
+                RETURN rest, size((rest)<-[:REVIEWS]-()) AS rev_count'%(cuisine, city)
     return graph.run(cypher).data()
 
 def get_all_cuisines():
@@ -47,8 +47,8 @@ def recommend_rest(restaurants):
 
 def get_reviews(restaurant):
 	id = restaurant['id']
-	cypher = "MATCH (:Business {id : '%s'})<-[r:REVIEWS]-(u:User)\
-                RETURN r, u"%(id)
+	cypher = 'MATCH (:Business {id : "%s"})<-[r:REVIEWS]-(u:User)\
+                RETURN r, u'%(id)
 	return graph.run(cypher).data()
 
 def get_top_review(reviews):
@@ -66,6 +66,45 @@ def get_top_review(reviews):
     if reviews:
         return reviews[0]
 
+def get_social_circle(user_id):
+    cypher = 'MATCH (:User {id : "%s"})-[:FRIEND*1..2]-(u:User)-[r:REVIEWS]-(:Business)\
+                RETURN u, COUNT(r)\
+                ORDER BY COUNT(r) DESC\
+                LIMIT 50'%(user_id)
+    return graph.run(cypher).data()
+
+def get_reviews_by_50(users, business, city, cuisine): #users are list of dict, other are strings
+    full_list = list()
+    for user in users:
+        id = user['u']['id']
+        cypher = 'MATCH (:User {id: "%s"})-[r:REVIEWS]->(b:Business {city: "%s"})\
+                    -[:IN_CATEGORY]->(Category {id: "%s"})\
+                    WHERE b.name <> "%s"\
+                    RETURN r.stars as stars, b.name as name'%(id, city, cuisine, business)
+        temp_list = graph.run(cypher).data()
+        full_list = full_list + temp_list
+    return full_list
+
+def recommend_5_rest(user_id, rest_name, city, cuisine): #all params are strings
+    users = get_social_circle(user_id)
+    if not users:
+        return
+
+    all_reviews = get_reviews_by_50(users, rest_name, city, cuisine)
+
+    #delete restaurants with same name
+    all_reviews.sort(key=lambda x: (x['name'], x['stars']), reverse=True)
+    i = 0
+    while i < len(all_reviews)-1:
+        while i < len(all_reviews)-1 and\
+        all_reviews[i]['name'] == all_reviews[i+1]['name']:
+            all_reviews.remove(all_reviews[i+1])
+        i+=1
+
+    #get top 5
+    all_reviews.sort(key=lambda x: x['stars'], reverse=True)
+    return all_reviews[:5]
+
 
 app = Flask(__name__)
 
@@ -80,6 +119,7 @@ def search():
     top_reviewer = ""
     top_rev_text = ""
     top_rev_stars = 0.0
+    other_rests = None
     if restaurant:
         rest_name = restaurant['rest']['name']
         rest_stars = float(restaurant['rest']['stars'])
@@ -89,10 +129,12 @@ def search():
             top_reviewer = top_review['u']['name']
             top_rev_text = top_review['r']['text']
             top_rev_stars = top_review['r']['stars']
+            other_rests = recommend_5_rest(top_review['u']['id'], rest_name, city, cuisine)
 
     return render_template("search.html", rest=rest_name,rest_stars=rest_stars,
     review_count=review_count, top_reviewer=top_reviewer,
-    top_rev_text=top_rev_text, top_rev_stars=top_rev_stars)
+    top_rev_text=top_rev_text, top_rev_stars=top_rev_stars,
+    other_rests=other_rests)
 
 @app.route("/", methods=["POST", "GET"])
 def home():
