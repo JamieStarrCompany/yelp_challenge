@@ -69,11 +69,10 @@ def get_top_review(reviews):
             if older_reviews[i]['r']['useful'] == None:
                 older_reviews['r']['useful'] = o
             
-        older_reviews.sort(key=lambda k: (k['r']['useful'], k['r']['date'], reverse=True)) 
-        return older_reviews[0]
-        
+            older_reviews.sort(key=lambda k: (k['r']['useful'], k['r']['date'], reverse=True)) 
+            return older_reviews[0]
         else
-        return reviews[0]
+            return reviews[0]
 
 def get_social_circle(user_id):
     cypher = 'MATCH (:User {id : "%s"})-[:FRIEND*1..2]-(u:User)-[r:REVIEWS]-(:Business)\
