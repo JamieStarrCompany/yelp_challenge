@@ -53,17 +53,26 @@ def get_reviews(restaurant):
 
 def get_top_review(reviews):
     #remove reviews older than 2 years
+    older_reviews = []
     now = date.today()
     now_str = "%s-%s-%s"%(str(now.year-2), '{:02d}'.format(now.month),
         '{:02d}'.format(now.day))
     for i in range(len(reviews) - 1, -1, -1):
         if reviews[i]['r']['date'] < now_str:
             reviews.remove(reviews[i])
+            older_reviews.append(reviews[i])
         elif reviews[i]['r']['useful'] == None:
             reviews[i]['r']['useful'] = 0
     #sort
     reviews.sort(key=lambda x: (x['r']['useful'], x['r']['date']), reverse=True)
-    if reviews:
+        if reviews[0] is None :
+            if older_reviews[i]['r']['useful'] == None:
+                older_reviews['r']['useful'] = o
+            
+        older_reviews.sort(key=lambda k: (k['r']['useful'], k['r']['date'], reverse=True)) 
+        return older_reviews[0]
+        
+        else
         return reviews[0]
 
 def get_social_circle(user_id):
