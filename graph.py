@@ -84,7 +84,7 @@ def fetch(city, cuisine, day, time):
 	#All data must be in CamelCase
 	time = time.split('-')
 	day = day.lower()
-	cypher = "MATCH (rest:Business)-[:IN_CATEGORY]->(Category {id: '%s'}) WHERE rest.city='%s' AND NOT ('%s' > rest.%sEnd AND '%s' < rest.%sStart AND '%s' > rest.%sEnd AND '%s' < rest.%sStart) RETURN rest"%(cuisine, city, time[0], day, time[0], day, time[1], day, time[1], day)
+	cypher = "MATCH (rest:Business)-[:IN_CATEGORY]->(Category {id: '%s'}) WHERE rest.city='%s' RETURN rest"%(cuisine, city)
 	return graph.run(cypher).data()		#RETURNS list of dictionaries
 
 def get_reviews(restaurant): #dict object
@@ -228,24 +228,16 @@ def main():
 	##
 
 	rest_results = fetch(city, cuisine, day, time) #rest_results is a list of dicts
-	restaurant = recommend_rest(rest_results) #restaurant should be a dict object
-	reviews_result = get_reviews(restaurant) #list of dictionaries
-	#print(rest_results)
 	restaurant = run.recommend_rest(rest_results) #restaurant should be a dict object
-	#print(restaurant)
 	reviews_result = get_reviews(restaurant['rest']) #list of dictionaries, including the reviews and their users
-	#print(reviews_result)
-	top_review = get_top_review(reviews_result) #dict object
-	#print(top_review)
+	top_review = run.get_top_review(reviews_result) #dict object
+	print(top_review)
 
 	#--------------------------------------------------------------------------------#
 	# Part 2: Recommend 5 more restaurants based on 50 other users
 	#--------------------------------------------------------------------------------#
 	circle = get_social_circle(dict(top_review.get('u'))) #circle is list of dicts of max len 50
-	#print(circle)
-
 	reviews_by_50 = get_reviews_by_50(circle, city, cuisine) #list of dict
-	#print(reviews_by_50)
 	top_5_restaurants = filter_reviews(reviews_by_50) #list of dict
 	
 	#--------------------------------------------------------------------------------#
