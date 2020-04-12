@@ -9,15 +9,14 @@ uri = "bolt://" + username + ":" + password + "@localhost:8000"
 graph = Graph(uri)
 
 
-
 def fetch(city, cuisine, day, time):
-    #TODO add day and time to query
-    day = day.lower()
     cypher = '  MATCH (rest:Business)-[:IN_CATEGORY]->(Category {id: "%s"})\
                 WHERE rest.city =~ "(?i)%s"\
                 WITH rest ORDER BY rest.stars DESC\
                 RETURN rest, size((rest)<-[:REVIEWS]-()) AS rev_count'%(cuisine, city)
-    return graph.run(cypher).data()
+    rests = graph.run(cypher).data()
+    return get_open_rests(rests, day, time)
+
 
 def get_all_cuisines():
     cypher = "MATCH (c:Category)\
@@ -25,11 +24,69 @@ def get_all_cuisines():
                 RETURN c as Cuisine"
     return graph.run(cypher).data()
 
+
 def get_all_cities():
     cypher = "MATCH (b:Business)\
                 WITH b ORDER BY b.city\
                 RETURN DISTINCT b.city AS City"
     return graph.run(cypher).data()
+
+
+def get_reviews(restaurant):
+	id = restaurant['id']
+	cypher = 'MATCH (:Business {id : "%s"})<-[r:REVIEWS]-(u:User)\
+                RETURN r, u'%(id)
+	return graph.run(cypher).data()
+
+
+def get_social_circle(user_id):
+    cypher = 'MATCH (:User {id : "%s"})-[:FRIEND*1..2]-(u:User)-[r:REVIEWS]-(:Business)\
+                RETURN u, COUNT(r)\
+                ORDER BY COUNT(r) DESC\
+                LIMIT 50'%(user_id)
+    return graph.run(cypher).data()
+
+
+def get_reviews_by_50(users, business, city, cuisine): #users are list of dict, other are strings
+    full_list = list()
+    for user in users:
+        id = user['u']['id']
+        cypher = 'MATCH (:User {id: "%s"})-[r:REVIEWS]->(b:Business {city: "%s"})\
+                    -[:IN_CATEGORY]->(Category {id: "%s"})\
+                    WHERE b.name <> "%s"\
+                    RETURN r.stars as stars, b.name as name'%(id, city, cuisine, business)
+        temp_list = graph.run(cypher).data()
+        full_list = full_list + temp_list
+    return full_list
+
+
+def get_open_rests(rests, day, time):
+    open_rests = []
+    for i in rests:
+        start = i['rest'][get_day(day) + 'Start']
+        end = i['rest'][get_day(day) + 'End']
+        print(start, "\t", end, end = "")
+        if start == None or end == None\
+            or start == 'Null' or end == 'Null':
+            open_rests.append(i)
+            continue
+        start = start.split(':')
+        start = [int(start[0]), int(start[1])]
+        end = end.split(':')
+        end = [int(end[0]), int(end[1])]
+
+        if compare_time(start, end) < 0:
+            if compare_time(start, time) <= 0 and compare_time(time, end) < 0:
+                open_rests.append(i)
+                continue
+        elif compare_time(start, end) > 0:
+            if compare_time(start, time) <= 0 or compare_time(time, end) < 0:
+                open_rests.append(i)
+                continue
+        else:
+            open_rests.append(i)
+            continue
+    return open_rests
 
 
 def recommend_rest(restaurants):
@@ -45,11 +102,6 @@ def recommend_rest(restaurants):
              top_rest = rest
     return top_rest
 
-def get_reviews(restaurant):
-	id = restaurant['id']
-	cypher = 'MATCH (:Business {id : "%s"})<-[r:REVIEWS]-(u:User)\
-                RETURN r, u'%(id)
-	return graph.run(cypher).data()
 
 def get_top_review(reviews):
     #remove reviews older than 2 years
@@ -63,7 +115,7 @@ def get_top_review(reviews):
         if reviews[i]['r']['date'] < now_str:
             older_reviews.append(reviews[i])
             reviews.remove(reviews[i])
-    #sort
+
     if len(reviews) != 0:
         reviews.sort(key=lambda x: (x['r']['useful'], x['r']['date']), reverse=True)
         return reviews[0]
@@ -71,30 +123,11 @@ def get_top_review(reviews):
         older_reviews.sort(key=lambda k: (k['r']['useful'], k['r']['date']), reverse=True)
         return older_reviews[0]
 
-def get_social_circle(user_id):
-    cypher = 'MATCH (:User {id : "%s"})-[:FRIEND*1..2]-(u:User)-[r:REVIEWS]-(:Business)\
-                RETURN u, COUNT(r)\
-                ORDER BY COUNT(r) DESC\
-                LIMIT 50'%(user_id)
-    return graph.run(cypher).data()
-
-def get_reviews_by_50(users, business, city, cuisine): #users are list of dict, other are strings
-    full_list = list()
-    for user in users:
-        id = user['u']['id']
-        cypher = 'MATCH (:User {id: "%s"})-[r:REVIEWS]->(b:Business {city: "%s"})\
-                    -[:IN_CATEGORY]->(Category {id: "%s"})\
-                    WHERE b.name <> "%s"\
-                    RETURN r.stars as stars, b.name as name'%(id, city, cuisine, business)
-        temp_list = graph.run(cypher).data()
-        full_list = full_list + temp_list
-    return full_list
 
 def recommend_5_rest(user_id, rest_name, city, cuisine): #all params are strings
     users = get_social_circle(user_id)
     if not users:
         return
-
     all_reviews = get_reviews_by_50(users, rest_name, city, cuisine)
 
     #delete restaurants with same name
@@ -109,6 +142,33 @@ def recommend_5_rest(user_id, rest_name, city, cuisine): #all params are strings
     #get top 5
     all_reviews.sort(key=lambda x: x['stars'], reverse=True)
     return all_reviews[:5]
+
+
+def compare_time(time1, time2):
+    # returns:
+    # 0 if time1 = time2
+    # -1 if time1 < time2
+    # 1 if time1 > time2
+    if time1[0] == time2[0]:
+        if time1[1] == time2[1]:
+            return 0
+        if time1[1] < time2[1]:
+            return -1
+        return 1
+    if time1[0] < time2[0]:
+        return -1
+    return 1
+
+
+def get_day(day):#day is a number from 0 to 6
+    day_of_week = ['monday',
+                'tuesday',
+                'wednesday',
+                'thursday',
+                'friday',
+                'saturday',
+                'sunday']
+    return day_of_week[day]
 
 
 app = Flask(__name__)
