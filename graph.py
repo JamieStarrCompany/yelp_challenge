@@ -147,9 +147,16 @@ def filter_reviews(reviews):
 #	SARAH
 #--------------------------------------------------------------------------------#
 
-def get_input():
+def get_input(form_city, form_cuisine, form_day, form_time):
 	global city
-	city = 'sdsdf' #etc...
+	global cuisine
+	global day
+	global time
+	
+	city = form_city
+	cuisine = form_cuisine
+	day = form_day
+	time = form_time
 
 #information all within the dict object
 def display_stats(restaurant, reviews):
