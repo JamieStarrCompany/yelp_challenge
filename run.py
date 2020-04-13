@@ -90,6 +90,7 @@ def get_open_rests(rests, day, time):
 
 
 def recommend_rest(restaurants):
+    restaurants = get_open_rests()
     if len(restaurants) == 0:
         return
 
