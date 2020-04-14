@@ -25,14 +25,13 @@ graph = ''
 def init_graph():
 	your_password = passw.ord()
 	uri = "bolt://neo4j:{}@localhost:8000".format(your_password)
-	global graph
 	graph = Graph(uri)
 
 	#Clean graph
 	graph.evaluate("MATCH (n) DETACH DELETE n")
 
 	#Set up key\val with APOC schema.assert
-	graph.evaluate("CALL apoc.schema.assert({Category:['name']},{Business:['id'],User:['id'],Review:['id'],Photo['id']})")
+	graph.evaluate("CALL apoc.schema.assert({Category:['name']},{Business:['id'],User:['id'],Review:['id'],Photo:['id']})")
 
 	#Load business.json, user.json and review.json respectivelu
 	graph.evaluate('CALL apoc.periodic.iterate("'
