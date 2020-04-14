@@ -108,8 +108,10 @@ def get_reviews_by_50(users, city, cuisine): #users are list of dict, other are 
 
 	return full_list
 
-def get_images(bussiness):
-	id = bussiness['id']
+def get_images(business):
+	id = business['id']
+	cypher = "MATCH (:Business {id : '%s'})<-[:PHOTO_OF]-(p) RETURN p"%(id)
+	return graph.run(cypher).data()
 	
 #--------------------------------------------------------------------------------#
 #	ADAM & JOHAN
