@@ -5,6 +5,7 @@ from py2neo import Graph
 import passw
 import re
 import run
+import app.routes
 
 #--------------------------------------------------------------------------------#
 #	GLOBAL VARIABLES
@@ -170,6 +171,7 @@ def get_input(form_city, form_cuisine, form_day, form_time):
 	cuisine = form_cuisine
 	day = form_day
 	time = form_time
+	display_stats()
 
 #information all within the dict object
 def display_stats(restaurant, reviews):
@@ -178,16 +180,8 @@ def display_stats(restaurant, reviews):
 	stars = restaurant['rest'].get('stars')
 	review_count = len(reviews)
 
-	print('---------------------------')
-	print('Top Restaurant:')
-	print('---------------------------')
-	print(name)
-	print(address)
-	print("Rating: " + stars)
-	print('Number of reviews: ' + str(review_count))
-	print('---------------------------')
-
-
+	app.routes.get_stats(name, address, stars, review_count)
+	app.routes.display_stats()
 
 def display_useful_review(review): 
 	text = review['r'].get('text')
