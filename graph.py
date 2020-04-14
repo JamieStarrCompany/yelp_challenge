@@ -171,7 +171,7 @@ def get_input(form_city, form_cuisine, form_day, form_time):
 	cuisine = form_cuisine
 	day = form_day
 	time = form_time
-	display_stats()
+	# display_stats()
 
 #information all within the dict object
 def display_stats(restaurant, reviews):
