@@ -32,7 +32,7 @@ def init_graph():
 	graph.evaluate("MATCH (n) DETACH DELETE n")
 
 	#Set up key\val with APOC schema.assert
-	graph.evaluate("CALL apoc.schema.assert({Category:['name']},{Business:['id'],User:['id'],Review:['id']})")
+	graph.evaluate("CALL apoc.schema.assert({Category:['name']},{Business:['id'],User:['id'],Review:['id'],Photo['id']})")
 
 	#Load business.json, user.json and review.json respectivelu
 	graph.evaluate('CALL apoc.periodic.iterate("'
@@ -67,6 +67,18 @@ def init_graph():
                'MERGE (u)-[r:REVIEWS]->(b) '
                'SET r += apoc.map.clean(value, [\'business_id\',\'user_id\',\'review_id\'],[0])'
                '",{batchSize: 10000, iterateList: true});')
+
+	graph.evaluate('CALL apoc.periodic.iterate("'
+               'CALL apoc.load.json(\'file:///photo.json\') '
+               'YIELD value RETURN value '
+               '"," '
+               'MERGE (p:Photo{id:value.photo_id}) '
+               'SET p += apoc.map.clean(value, [\'friends\',\'photo_id\'],[0]) '
+               'WITH p,value.business_id as businesses '
+               'UNWIND businesses as business '
+               'MERGE (b:Business{id:business}) '
+               'MERGE (p)-[:PHOTO_OF]->(b) '
+               '",{batchSize: 100, iterateList: true});')
 
 def open_graph():
         
