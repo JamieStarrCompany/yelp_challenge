@@ -19,8 +19,6 @@ class Config(object):
 
 
 class SearchForm(FlaskForm):
-
-
 	city = SelectField(u'City', choices=get_city_list())
 
 	cuisine = SelectField(u'Cuisine', choices=get_cuisine_list())
@@ -39,4 +37,4 @@ def submit(city, cuisine, day, time):
 	top_review = get_top_review(rest)
 	if rest and top_review:
 		ad_rests = recommend_5_rest(top_review['u']['id'],\
-		 rest['rest']['name'], city, cuisine)
+		rest['rest']['name'], city, cuisine)
