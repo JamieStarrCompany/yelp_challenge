@@ -4,10 +4,35 @@
 	<h1> Top Restaurant </h1>
 	<div>
 		<p>
-			Restaurant name: {{ name }}<br>
-			Address: {{ address }}<br>
-			Rating: {{ rating }}<br>
-			Number of reviews: {{ review_count }}
+			{% if rest %}
+				Restaurant name: {{rest['rest']['name']}}<br>
+				{{rest['rest']['stars']}} stars <br>
+				{{rest['rev_count']}} reviews <br>
+				Address: {{rest['rest']['address']}}, {{rest['rest']['city']}},
+				{{rest['rest']['state']}}, {{rest['rest']['postal_code']}}<br> <br>
+				<!-- maybe check if all the above fields exist, for example, not all
+			restaurants have an address or postal_code -->
+
+				{% if top_review %}
+					Top review, by {{top_review['u']['name']}}: <br>
+					{{top_review['r']['stars']}} stars <br>
+					{{top_review['r']['text']}} <br>
+
+					{% if ad_rests != [] %}
+						Other restaurants in the area:
+						<ul>
+							{% for r in ad_rests %}
+								<li>{{r['name']}}</li>
+							{% endfor %}
+						</ul>
+					{% endif %}
+
+				{% endif %}
+
+			{% else %}
+				No restaurant found<br>
+			{% endif %}
+
 		</p>
 	</div>
 {% endblock %}
