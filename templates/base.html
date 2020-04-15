@@ -1,0 +1,19 @@
+<html>
+	<head>
+		<title>Search restaurant</title>
+	</head>
+	<body>
+		<div>Search restaurants: <a href="{{url_for('find_restaurants')}}">Click Here!</a></div>
+		<hr>
+		{% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <ul>
+            {% for message in messages %}
+            <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        {% endwith %}
+		{% block content %}{% endblock %}
+	</body>
+</html>
