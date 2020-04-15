@@ -1,7 +1,6 @@
 from flask import Flask, render_template, flash, redirect, url_for
 import front
 
-
 app = Flask(__name__)
 app.config.from_object(front.Config)
 
@@ -12,12 +11,8 @@ def index():
 
 @app.route('/display_restaurants')
 def display_stats():
-    name = front.rest['rest']['name']
-    address = ""
-    rating = 5
-    review_count = 0
-    return render_template('display_template.html', name=name, address=address, rating=rating, review_count=review_count)
-
+    return render_template('display_template.html', rest=front.rest,\
+    top_review=front.top_review, ad_rests=front.ad_rests)
 
 @app.route('/find_restaurants', methods=['GET', 'POST'])
 def find_restaurants():
