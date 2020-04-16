@@ -13,13 +13,25 @@
 				<!-- maybe check if all the above fields exist, for example, not all
 			restaurants have an address or postal_code -->
 
+				{% if photos != [] %}
+					Photos: <br>
+					{% for p in photos %}
+						<figure>
+							<img src="/static/{{p['p']['id']}}.jpg" alt='missing' />
+							{% if p['p']['caption'] != '' %}
+								<figcaption>{{p['p']['caption']}}</figcaption>
+							{% endif %}
+						</figure>
+					{% endfor %}
+				{% endif %}
+
 				{% if top_review %}
 					Top review, by {{top_review['u']['name']}}: <br>
 					{{top_review['r']['stars']}} stars <br>
 					{{top_review['r']['text']}} <br>
 
 					{% if ad_rests != [] %}
-						Other restaurants in the area:
+						Other restaurants in the area: <br>
 						<ul>
 							{% for r in ad_rests %}
 								<li>{{r['name']}}</li>
