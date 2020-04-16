@@ -1,5 +1,7 @@
 from datetime import date
+from random import shuffle
 import back
+
 
 def recommend_rest(city, cuisine, day, time):
     restaurants = back.get_restaurants(city, cuisine)
@@ -88,6 +90,16 @@ def recommend_5_rest(user_id, rest_name, city, cuisine): #all params are strings
     #get top 5
     all_reviews.sort(key=lambda x: x['stars'], reverse=True)
     return all_reviews[:5]
+
+
+def get_random_photos(rest, max):
+    if not rest:
+        return []
+    photos = back.get_images(rest)
+    shuffle(photos)
+    if len(photos) > max:
+        return photos[:max]
+    return photos
 
 
 def get_city_list():
