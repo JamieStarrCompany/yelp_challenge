@@ -17,16 +17,16 @@ def get_restaurants(city, cuisine):
 
 
 def get_all_cuisines():
-    cypher = "MATCH (c:Category)\
+    cypher = 'MATCH (c:Category)\
                 WITH c ORDER BY c.id\
-                RETURN c as Cuisine"
+                RETURN c as Cuisine'
     return graph.run(cypher).data()
 
 
 def get_all_cities():
-    cypher = "MATCH (b:Business)\
+    cypher = 'MATCH (b:Business)\
                 WITH b ORDER BY b.city\
-                RETURN DISTINCT b.city AS City"
+                RETURN DISTINCT b.city AS City'
     return graph.run(cypher).data()
 
 
@@ -56,3 +56,9 @@ def get_reviews_by_50(users, business, city, cuisine): #users are list of dict, 
         temp_list = graph.run(cypher).data()
         full_list = full_list + temp_list
     return full_list
+
+
+def get_images(business):
+	id = business['rest']['id']
+	cypher = "MATCH (:Business {id : '%s'})<-[:PHOTO_OF]-(p) RETURN p"%(id)
+	return graph.run(cypher).data()
