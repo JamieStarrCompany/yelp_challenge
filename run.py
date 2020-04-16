@@ -12,7 +12,7 @@ def index():
 @app.route('/display_restaurants')
 def display_stats():
     return render_template('display_template.html', rest=front.rest,\
-    top_review=front.top_review, ad_rests=front.ad_rests)
+    top_review=front.top_review, ad_rests=front.ad_rests, photos=front.photos)
 
 @app.route('/find_restaurants', methods=['GET', 'POST'])
 def find_restaurants():
