@@ -5,11 +5,12 @@ from wtforms_components import TimeField
 import os
 
 from mid import recommend_rest, get_top_review, recommend_5_rest,\
-get_city_list, get_cuisine_list
+get_city_list, get_cuisine_list, get_random_photos
 
 rest = None
 top_review = None
 ad_rests = []
+photos = []
 
 class Config(object):
 	#In flask (and in its extensions) , we sometimes us the value of the secret key
@@ -32,8 +33,10 @@ def submit(city, cuisine, day, time):
 	global rest
 	global top_review
 	global ad_rests
+	global photos
 
 	rest = recommend_rest(city, cuisine, day, [time.hour, time.minute])
+	photos = get_random_photos(rest, 3)
 	top_review = get_top_review(rest)
 	if rest and top_review:
 		ad_rests = recommend_5_rest(top_review['u']['id'],\
