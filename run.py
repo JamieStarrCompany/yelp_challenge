@@ -1,8 +1,10 @@
 from flask import Flask, render_template, flash, redirect, url_for
+from flask_bootstrap import Bootstrap
 import front
 
 app = Flask(__name__)
 app.config.from_object(front.Config)
+bootstrap = Bootstrap(app)
 
 @app.route('/')
 @app.route('/index')

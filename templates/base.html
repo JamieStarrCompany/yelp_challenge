@@ -1,10 +1,25 @@
+{% extends "bootstrap/base.html" %}
 <html>
 	<head>
-		<title>Search restaurant</title>
+		{% block title %}
+		Search for Restaurants
+		{% endblock %}
+
+		{% block styles %}
+		<link href="{{bootstrap_find_resource('css/bootstrap.css', cdn='bootstrap')}}" rel="stylesheet">
+		<link href="{{url_for('.static', filename='nav.css')}}" rel="stylesheet">
+
+		{% endblock %}
+
 	</head>
+	
 	<body>
-		<div>Search restaurants: <a href="{{url_for('find_restaurants')}}">Click Here!</a></div>
-		<hr>
+		{% block navbar %}
+		<div class="nav_bar">
+			<a href="{{url_for('find_restaurants')}}">Search restaurants</a><hr>
+		</div>
+		{% endblock %}
+
 		{% with messages = get_flashed_messages() %}
         {% if messages %}
         <ul>
