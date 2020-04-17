@@ -25,7 +25,7 @@ class SearchForm(FlaskForm):
 	cuisine = SelectField(u'Cuisine', choices=get_cuisine_list())
 
 	day = SelectField(u'Day', choices=[('Monday', 'Monday'), ('Tuesday', 'Tuesday'), ('Wednesday', 'Wednesday'), ('Thursday', 'Thursday'), ('Friday', 'Friday'), ('Saturday', 'Saturday'), ('Sunday', 'Sunday')])
-	time = TimeField('Time')
+	time = TimeField('Time', format='%H:%M')
 	search = SubmitField('Search')
 
 
