@@ -8,6 +8,7 @@
 		{% block styles %}
 		<link href="{{bootstrap_find_resource('css/bootstrap.css', cdn='bootstrap')}}" rel="stylesheet">
 		<link href="{{url_for('.static', filename='nav.css')}}" rel="stylesheet">
+		<link href="{{url_for('.static', filename='background.css')}}" rel="stylesheet">
 
 		{% endblock %}
 
@@ -19,16 +20,9 @@
 			<a href="{{url_for('find_restaurants')}}">Search restaurants</a><hr>
 		</div>
 		{% endblock %}
-
-		{% with messages = get_flashed_messages() %}
-        {% if messages %}
-        <ul>
-            {% for message in messages %}
-            <li>{{ message }}</li>
-            {% endfor %}
-        </ul>
-        {% endif %}
-        {% endwith %}
-		{% block content %}{% endblock %}
+		{% block content %}
+		<div class="jumbotron big-banner" style="height : 500px; padding-top: 15px;"> 
+		</div>
+		{% endblock %}
 	</body>
 </html>

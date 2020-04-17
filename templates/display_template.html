@@ -1,7 +1,19 @@
 {% extends "base.html" %}
 
 {% block content %}
-	<h1> Top Restaurant </h1>
+<div class="jumbotron big-banner" style="height : 500px; padding-top: 15px;"> 
+	<div class="container">
+		{% with messages = get_flashed_messages() %}
+        	{% if messages %}
+        		<ul>
+            	{% for message in messages %}
+            	<li>{{ message }}</li>
+            {% endfor %}
+        		</ul>
+        	{% endif %}
+        {% endwith %}
+    </div>
+	<h1 align="center"> Top Restaurant </h1>
 	<div>
 		<p>
 			{% if rest %}
@@ -47,4 +59,5 @@
 
 		</p>
 	</div>
+</div>
 {% endblock %}
