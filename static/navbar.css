@@ -1,0 +1,10 @@
+.nav_bar {
+	background-color: #616A6B
+}
+
+.nav_bar a {
+	text-align: center;
+  	font-size: 30px;
+  	color: white;
+  	padding: 14px 16px;
+}	

@@ -7,8 +7,8 @@
 
 		{% block styles %}
 		<link href="{{bootstrap_find_resource('css/bootstrap.css', cdn='bootstrap')}}" rel="stylesheet">
-		<link href="{{url_for('.static', filename='nav.css')}}" rel="stylesheet">
-		<link href="{{url_for('.static', filename='background.css')}}" rel="stylesheet">
+		<link href="{{url_for('.static', filename='navbar.css')}}" rel="stylesheet">
+		<link href="{{url_for('.static', filename='align.css')}}" rel="stylesheet">
 
 		{% endblock %}
 
@@ -21,7 +21,7 @@
 		</div>
 		{% endblock %}
 		{% block content %}
-		<div class="jumbotron big-banner" style="height : 500px; padding-top: 15px;"> 
+		<div class="jumbotron big-banner" style="height : 500px; padding-top: 15px;background-image: url(https://unsplash.com/photos/NdBsn0WQadw); background-size: cover"> 
 		</div>
 		{% endblock %}
 	</body>

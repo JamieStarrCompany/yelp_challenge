@@ -5,23 +5,23 @@
     <h1 align="center">Eat in : Arizona</h1>
     <form action="" method="post" novalidate>
         {{ form.hidden_tag() }}
-        <p>
+        <p align="center">
             {{ form.city.label }} <br>
             {{ form.city }}
         </p>
-        <p>
+        <p align="center">
             {{ form.cuisine.label }}<br>
             {{ form.cuisine }}
         </p>
-        <p>
+        <p align="center">
             {{ form.day.label }}<br>
             {{ form.day }}
         </p>
-        <p>
+        <p align="center">
             {{ form.time.label }}<br>
             {{ form.time() }}
         </p>
-        <p>{{ form.search() }}</p>
+        <p align="center">{{ form.search() }}</p>
     </form>
 </div>
 {% endblock %}

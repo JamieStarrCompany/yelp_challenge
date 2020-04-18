@@ -38,6 +38,8 @@
 				{% endif %}
 
 				{% if top_review %}
+				<div class="jumbotron big-banner" style="height : 500px; padding-top: 15px;"> 
+
 					Top review, by {{top_review['u']['name']}}: <br>
 					{{top_review['r']['stars']}} stars <br>
 					{{top_review['r']['text']}} <br>
@@ -49,6 +51,7 @@
 								<li>{{r['name']}}</li>
 							{% endfor %}
 						</ul>
+					</div>
 					{% endif %}
 
 				{% endif %}
