@@ -8,8 +8,6 @@
 		{% block styles %}
 		<link href="{{bootstrap_find_resource('css/bootstrap.css', cdn='bootstrap')}}" rel="stylesheet">
 		<link href="{{url_for('.static', filename='navbar.css')}}" rel="stylesheet">
-		<link href="{{url_for('.static', filename='align.css')}}" rel="stylesheet">
-
 		{% endblock %}
 
 	</head>
@@ -21,7 +19,8 @@
 		</div>
 		{% endblock %}
 		{% block content %}
-		<div class="jumbotron big-banner" style="height : 500px; padding-top: 15px;background-image: url(https://unsplash.com/photos/NdBsn0WQadw); background-size: cover"> 
+		<div class="jumbotron bg-cover" style="height : 500px; padding-top: 15px;background-image:url(https://images.unsplash.com/photo-1529599087-bcf1dc4a7ae4?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1304&q=80); background-size: cover"> 
+			<h1 align="center">Discover the restaurants of Arizona!</h1>
 		</div>
 		{% endblock %}
 	</body>
