@@ -17,7 +17,7 @@ def init_graph():
                'CALL apoc.load.json(\'file:///business.json\') YIELD value RETURN value '
                '"," '
                'MERGE (b:Business{id:value.business_id}) '
-               'SET b += apoc.map.clean(value, [\'business_id\',\'categories\',\'address\',\'postal_code\'],[]) '
+               'SET b += apoc.map.clean(value, [\'business_id\',\'categories\'],[]) '
                'WITH b,value.categories as categories '
                'UNWIND categories as category '
                'MERGE (c:Category{id:category}) '
