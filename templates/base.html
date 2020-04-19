@@ -15,14 +15,10 @@
 	<body>
 		{% block navbar %}
 		<div class="nav_bar">
-			<a href="{{url_for('find_restaurants')}}">Search restaurants</a><hr>
+			<a href="{{url_for('index')}}">Search restaurants</a><hr>
 		</div>
 		{% endblock %}
 		{% block content %}
-		<div class="jumbotron bg-cover" style="height : 500px; padding-top: 15px;background-image:url(https://images.unsplash.com/photo-1529599087-bcf1dc4a7ae4?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1304&q=80); background-size: cover"> 
-			<h1 align="center">Discover the restaurants of Arizona!</h1>
-			<h2 align="center">Click "Search Restaurants"</h2>
-		</div>
 		{% endblock %}
 	</body>
 </html>
