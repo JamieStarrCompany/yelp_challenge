@@ -6,6 +6,7 @@ import os
 
 from mid import recommend_rest, get_top_review, recommend_5_rest,\
 get_city_list, get_cuisine_list, get_random_photos
+import tests
 
 rest = None
 top_review = None
@@ -38,9 +39,14 @@ def submit(city, cuisine, day, time):
 	global ad_rests
 	global photos
 
-	rest = recommend_rest(city, cuisine, day, [time.hour, time.minute])
+	rest = recommend_rest(city, cuisine, day, time)
 	photos = get_random_photos(rest, 3)
 	top_review = get_top_review(rest)
 	if rest and top_review:
 		ad_rests = recommend_5_rest(top_review['u']['id'],\
 		rest['rest']['name'], city, cuisine)
+
+def test_case(n):
+	s = tests.get_scenario(n)
+	if s:
+		submit(s[0], s[1], s[2], s[3])
