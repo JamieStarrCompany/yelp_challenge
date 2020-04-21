@@ -3,40 +3,54 @@
 
 {% macro render_dropdown(field) %}
 <div class="container">
-    <div class="row">
-        <div class="col-4">
-            {{ field(class='form-control')}}
-        </div>
-    </div>
+   {{ field(class='form-control')}}
+</div>
+{% endmacro %}
+
+{% macro render_button(field) %}
+<div class="container">
+   {{ field(class='form-control')}}
 </div>
 {% endmacro %}
 
 {% block content %}
-<div class="jumbotron big-banner" style="height : 100%; padding-top: 15px;background-image:url(https://images.unsplash.com/photo-1529599087-bcf1dc4a7ae4?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1304&q=80); background-size: cover">
-    <!-- {{ wtf.quick_form(form) }} -->
+<div class="jumbotron big-banner" style="height : 100%; background-image:url(https://images.unsplash.com/photo-1529599087-bcf1dc4a7ae4?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1304&q=80); background-size: cover">
     <h1 align="center">Eat in : Arizona</h1>
     <form action="" method="post" novalidate>
         {{ form.hidden_tag() }}
-        <p align="center">
-            {{ form.city.label }} <br>
+        <div align="center">
+            <h3 style="color:white;">City</h3> 
+            <div style="width: 25%">
             <!-- {{ form.city }} -->
             {{ render_dropdown(form.city) }}
-        </p>
-        <p align="center">
-            {{ form.cuisine.label }}<br>
+            </div>
+        </div>
+       <div align="center">
+            <h3 style="color:white;">Cuisine</h3> 
+            <div style="width: 25%">
             <!-- {{ form.cuisine }} -->
             {{ render_dropdown(form.cuisine) }}
-        </p>
-        <p align="center">
-            {{ form.day.label }}<br>
+            </div>
+        </div>
+        <div align="center">
+            <h3 style="color:white;">Day</h3> 
+            <div style="width: 25%">
             <!-- {{ form.day }} -->
             {{ render_dropdown(form.day) }}
-        </p>
-        <p align="center">
-            {{ form.time.label }}<br>
-            {{ form.time() }}
-        </p>
-        <p align="center">{{ form.search() }}</p>
+            </div>
+        </div>
+        <div align="center">
+            <h3 style="color:white;">Time</h3>
+            <div style="width: 10%">
+                {{ render_button(form.time) }}
+            </div>
+            <br><br>
+        </div>
+        <div align="center">
+            <div style="width: 10%">
+            {{ render_button(form.search) }}
+            </div>
+        </div>
     </form>
 </div>
 {% endblock %}
