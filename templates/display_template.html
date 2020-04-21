@@ -15,19 +15,17 @@
 
 				{% if photos != [] %}
 					Photos: <br>
-					<div class="container">
-						<div class="row">
+					<div align="center">
 						{% for p in photos %}
-							<figure>
+							<figure style="display: inline-block; margin: 20px">
 								<div class="col-4">
-								<img src="/static/{{p['p']['id']}}.jpg" alt='missing' />
+								<img src="/static/{{p['p']['id']}}.jpg" alt='missing' style="width: 300px; height: 300px" />
 								{% if p['p']['caption'] != '' %}
 									<figcaption>{{p['p']['caption']}}</figcaption>
 								{% endif %}
 								</div>
 							</figure>
 						{% endfor %}
-						</div>
 					</div>
 				{% endif %}
 		</p>
