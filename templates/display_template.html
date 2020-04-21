@@ -2,67 +2,66 @@
 {% import 'bootstrap/wtf.html' as wtf %}
 
 {% block content %}
-<div class="jumbotron big-banner" style="height : 100%; padding-top: 15px; background-image:url(https://images.unsplash.com/photo-1529599087-bcf1dc4a7ae4?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1304&q=80); background-size: cover">
-	<div class="container">
-		{% with messages = get_flashed_messages() %}
-        	{% if messages %}
-        		<ul>
-            	{% for message in messages %}
-            	<li>{{ message }}</li>
-            {% endfor %}
-        		</ul>
-        	{% endif %}
-        {% endwith %}
-    </div>
+<div class="jumbotron big-banner" style="height : 100%; padding-top: 15px; background-image:url(https://images.unsplash.com/photo-1533066636271-fdbe3e84ad80?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1534&q=80); background-size: cover">
 	<h1 align="center"> Top Restaurant </h1>
 	<div>
-		<p>
+		<p align="center">
 			{% if rest %}
 				Restaurant name: {{rest['rest']['name']}}<br>
 				{{rest['rest']['stars']}} stars <br>
 				{{rest['rev_count']}} reviews <br>
 				Address: {{rest['rest']['address']}}, {{rest['rest']['city']}},
 				{{rest['rest']['state']}}, {{rest['rest']['postal_code']}}<br> <br>
-				<!-- maybe check if all the above fields exist, for example, not all
-			restaurants have an address or postal_code -->
 
 				{% if photos != [] %}
 					Photos: <br>
-					{% for p in photos %}
-						<figure>
-							<img src="/static/{{p['p']['id']}}.jpg" alt='missing' />
-							{% if p['p']['caption'] != '' %}
-								<figcaption>{{p['p']['caption']}}</figcaption>
-							{% endif %}
-						</figure>
-					{% endfor %}
+					<div class="container">
+						<div class="row">
+						{% for p in photos %}
+							<figure>
+								<div class="col-4">
+								<img src="/static/{{p['p']['id']}}.jpg" alt='missing' />
+								{% if p['p']['caption'] != '' %}
+									<figcaption>{{p['p']['caption']}}</figcaption>
+								{% endif %}
+								</div>
+							</figure>
+						{% endfor %}
+						</div>
+					</div>
 				{% endif %}
 		</p>
-		<p>
-				{% if top_review %}
-				<div class="jumbotron big-banner" style="height : 500px; padding-top: 15px;"> 
+		<div style="background-color:white">
+		<p style="margin-left: 20%">
+			{% if top_review %} 
 				<h2>Top Review</h2>
-					by {{top_review['u']['name']}}: <br>
-					{{top_review['r']['stars']}} stars <br>
-					{{top_review['r']['text']}} <br>
+				by {{top_review['u']['name']}}: <br>
+				{{top_review['r']['stars']}} stars <br>
+				{{top_review['r']['text']}} <br>
 
-					{% if ad_rests != [] %}
-						Other restaurants in the area: <br>
-						<ul>
-							{% for r in ad_rests %}
-								<li>{{r['name']}}</li>
-							{% endfor %}
-						</ul>
-					</div>
-					{% endif %}
-
-				{% endif %}
-
-			{% else %}
-				No restaurant found<br>
+				{% if ad_rests != [] %}
+					<h3>Other restaurants in the area: </h3>
+					<ul>
+						{% for r in ad_rests %}
+							<li>{{r['name']}}</li>
+						{% endfor %}
+					</ul>
+				{% else %}
+					There are no other restaurants in your area that match this criteria :(
+				{% endif%}
 			{% endif %}
 
+			{% else %}
+			<div style="height : 500px;">
+				<p align="center">
+					No restaurant found :( <br>
+					Sorry, there isn't a restaurant that matches your criteria. <br>
+					Click "Search Restaurants" in the top left to try a different search.
+				</p>
+			</div>
+			{% endif %}
 		</p>
+		</div>
 	</div>
 </div>
 {% endblock %}

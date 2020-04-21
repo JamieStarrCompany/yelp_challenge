@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import SubmitField, SelectField#, PasswordField, StringField, BooleanField
+from wtforms import SubmitField, SelectField
 from wtforms_components import TimeField
 
 import os
@@ -14,9 +14,6 @@ ad_rests = []
 photos = []
 
 class Config(object):
-	#In flask (and in its extensions) , we sometimes us the value of the secret key
-	#as a crypographic key -> useful to gen signatures or tokens
-	#FlaskWTF uses it to protect web forms from CSRF (cross site request forgery) attacks
 	SECRET_KEY = os.environ.get('SECRET_KEY') or 'you-will-never-guess'
 
 
