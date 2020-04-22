@@ -26,11 +26,6 @@ def display_stats():
 def find_restaurants():
     form = front.SearchForm()
     if form.validate_on_submit():
-        # flash('City to search in {}'.format(form.city.data))
-        # flash('Cuisine {}'.format(form.cuisine.data))
-        # flash('Day {}'.format(form.day.data))
-        # flash('Time {}'.format(form.time.data))
-
         front.submit(form.city.data, form.cuisine.data, form.day.data,\
 		[form.time.data.hour, form.time.data.minute])
         return redirect(url_for('display_stats'))
