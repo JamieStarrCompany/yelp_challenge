@@ -21,7 +21,7 @@
 								<div class="col-4">
 								<img src="/static/{{p['p']['id']}}.jpg" alt='missing' style="width: 300px; height: 300px" />
 								{% if p['p']['caption'] != '' %}
-									<figcaption>{{p['p']['caption']}}</figcaption>
+									<figcaption style="display: table-caption;">{{p['p']['caption']}}</figcaption>
 								{% endif %}
 								</div>
 							</figure>
@@ -29,8 +29,8 @@
 					</div>
 				{% endif %}
 		</p>
-		<div style="background-color:white">
-		<p style="margin-left: 20%">
+		<div style="background-color:white; margin: 20px">
+		<p class="rounded" style="margin-left: 20%">
 			{% if top_review %} 
 				<h2>Top Review</h2>
 				by {{top_review['u']['name']}}: <br>
@@ -45,6 +45,7 @@
 						{% endfor %}
 					</ul>
 				{% else %}
+					<br>
 					There are no other restaurants in your area that match this criteria :(
 				{% endif%}
 			{% endif %}
