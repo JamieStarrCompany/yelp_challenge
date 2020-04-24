@@ -51,7 +51,7 @@ def init_graph():
                'YIELD value RETURN value '
                '"," '
                'MERGE (p:Photo{id:value.photo_id}) '
-               'SET p += apoc.map.clean(value, [\'friends\',\'photo_id\'],[0]) '
+               'SET p += apoc.map.clean(value, [\'business_id\',\'photo_id\'],[0]) '
                'WITH p,value.business_id as businesses '
                'UNWIND businesses as business '
                'MERGE (b:Business{id:business}) '
