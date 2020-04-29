@@ -2,11 +2,19 @@ from flask import Flask, render_template, flash, redirect, url_for
 from flask_bootstrap import Bootstrap
 import front
 import sys
+import os
+import logging
+
+cli = sys.modules['flask.cli']
+cli.show_server_banner = lambda *x: None
 
 app = Flask(__name__)
 app.config.from_object(front.Config)
 bootstrap = Bootstrap(app)
 testing = False
+
+log = logging.getLogger('werkzeug')
+log.setLevel(logging.ERROR)
 
 @app.route('/')
 @app.route('/index')
@@ -36,4 +44,7 @@ if __name__ == '__main__':
 		test_case_n = int(sys.argv[1])
 		front.test_case(test_case_n)
 		testing = True
-	app.run(debug=True)
+	os.system('xdg-open http://127.0.0.1:5000/')
+	app.run(debug=False)
+	
+
