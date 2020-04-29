@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+	<h1> Top Restaurant </h1>
+	<div>
+		<p>
+			Restaurant name: {{ name }}<br>
+			Address: {{ address }}<br>
+			Rating: {{ rating }}<br>
+			Number of reviews: {{ review_count }}
+		</p>
+	</div>
+{% endblock %}
