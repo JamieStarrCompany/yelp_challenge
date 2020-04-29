@@ -1,3 +1,5 @@
+import os
+import sys
 import passw
 from py2neo import Graph
 
@@ -58,4 +60,17 @@ def init_graph():
                'MERGE (p)-[:PHOTO_OF]->(b) '
                '",{batchSize: 100, iterateList: true});')
 
-init_graph()
+def main():
+    if len(sys.argv) > 1:
+        switch()
+    init_graph()
+
+def switch():
+    #TODO BEFORE USING CHANGE PATH TO CORRECT PATH 
+    print("GO FIX THE PATH FIRST")
+    #os.system("mv PATH/import PATH/import2")
+    #os.system("mv PATH/import1 PATH/import")
+    #os.system("mv PATH/import2 PATH/import1")
+
+if __name__ == "__main__":
+    main()
